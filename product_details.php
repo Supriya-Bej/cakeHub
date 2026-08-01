@@ -1,5 +1,8 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 include("db_connect.php");
 global $conn;
 $user_id = $_SESSION['user_id'] ?? 0;
@@ -52,6 +55,7 @@ if (isset($_GET['id'])) {
             min-height: 100vh;
             font-family: 'Segoe UI', sans-serif;
         }
+
 
         .img_container {
             margin: 30px;
@@ -228,6 +232,11 @@ if (isset($_GET['id'])) {
             .btn-group-custom .btn {
                 width: 100%;
             }
+
+            .btn-buy {
+                width: 100%;
+
+            }
         }
     </style>
 
@@ -235,7 +244,7 @@ if (isset($_GET['id'])) {
 
 <body>
     <?php include("header.php"); ?>
-    <div class="container py-5">
+    <div class="container py-5 " style="margin-top: 8vh;">
 
         <div class="product-card">
             <div class="row g-5">
@@ -254,11 +263,11 @@ if (isset($_GET['id'])) {
                 <!-- DETAILS -->
                 <div class="col-lg-7">
 
-                    <h2 class="product-title">
+                    <h2 class="product-title" style="padding-left: 20px;">
                         <?php echo $product['name']; ?>
                     </h2>
 
-                    <div class="justify-content-between">
+                    <div class="justify-content-between" style="padding-left: 20px;">
                         <!-- RATING -->
                         <div class="rating mb-3">
 
@@ -306,15 +315,15 @@ if (isset($_GET['id'])) {
                         <?php } ?>
                     </div>
 
-                    <p class="text-muted">
+                    <p class="text-muted" style="padding-left: 20px;">
                         <?php echo $product['description']; ?>
                     </p>
 
-                    <h3 class="price">
+                    <h3 class="price" style="padding-left: 20px;">
                         ₹<?php echo $product['price']; ?>/kg
                     </h3>
 
-                    <div class="mb-3">
+                    <div class="mb-3" style="padding-left: 20px;">
 
                         <span class="fw-bold">Availability:</span>
 
@@ -335,7 +344,7 @@ if (isset($_GET['id'])) {
                     </div>
 
                     <!-- BUTTONS -->
-                    <div class="d-flex gap-3 btn-group-custom">
+                    <div class="d-flex flex-column flex-sm-row gap-2 mt-3 px-3">
 
                         <?php if ($product['stock'] == 0) { ?>
                             <a href=""
@@ -383,7 +392,7 @@ if (isset($_GET['id'])) {
                     </div>
 
                     <!-- REVIEWS -->
-                    <div class="mt-5">
+                    <div class="mt-5" style="padding: 0 20px;">
 
                         <div class="d-flex justify-content-between align-items-center mb-3">
 

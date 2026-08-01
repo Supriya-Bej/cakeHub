@@ -1,7 +1,9 @@
 <?php
 include('db_connect.php');
 global $conn;
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $userid = $_SESSION['user_id'] ?? 0;
 $sql = "SELECT * FROM `users` WHERE id='$userid'";
 $result = mysqli_query($conn, $sql);
