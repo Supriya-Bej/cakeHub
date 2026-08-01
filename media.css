@@ -1,0 +1,446 @@
+@media only screen and (min-width:200px) and (max-width:575px) {
+
+    /* .one { */
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+    /* width: 100%;
+        height: 100vh;
+        background: linear-gradient(150deg, rgb(202, 196, 127), rgb(137, 63, 2));
+    }
+
+    .one h1 {
+        font-size: 37vw;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: white;
+        z-index: 1;
+    }
+
+    #cake {
+        position: absolute;
+        width: 27%;
+        z-index: 2;
+        transition: all cubic-bezier(0.19, 1, 0.22, 1)0.5s;
+    }
+
+    #slice {
+        position: absolute;
+        top: 35%;
+        left: 26%;
+        width: 27%;
+        z-index: 1;
+        transition: all cubic-bezier(0.19, 1, 0.22, 1)0.5s;
+    }
+
+    #cherry {
+        position: absolute;
+        width: 17%;
+        z-index: 3;
+        top: 63%;
+        right: 30%;
+        transition: all cubic-bezier(0.19, 1, 0.22, 1)0.5s;
+    }
+
+    #leaf1 {
+        position: absolute;
+        top: 43%;
+        z-index: 0;
+        left: 15%;
+        transform: rotate(370deg);
+        width: 15%;
+        transition: all cubic-bezier(0.19, 1, 0.22, 1)0.5s;
+    }
+
+    #gems {
+        position: absolute;
+        top: 65%;
+        left: 89%;
+        transform: rotate(-90deg);
+        width: 13%;
+        z-index: 1;
+        transition: all cubic-bezier(0.19, 1, 0.22, 1)0.5s;
+    }
+
+    #sprinkle {
+        position: absolute;
+        width: 50%;
+        top: 11%;
+        right: 0%;
+        transition: all cubic-bezier(0.19, 1, 0.22, 1)0.5s;
+
+    }
+
+    #sprinkle2 {
+        position: absolute;
+        width: 40%;
+        top: 73%;
+        left: 0%;
+        transition: all cubic-bezier(0.19, 1, 0.22, 1)0.5s;
+
+    } */
+    .two,
+    .three,
+    .one {
+        display: none;
+    }
+
+    /* Offer */
+    @media (max-width: 991px) {
+
+        .offer-card {
+            height: auto;
+
+            flex-direction: column-reverse;
+
+            text-align: center;
+
+            padding: 25px;
+        }
+
+        .offer-content {
+            width: 100%;
+        }
+
+        .offer-image {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .offer-image img {
+            width: 100%;
+            height: 220px;
+        }
+
+        .offer-content h2 {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+
+        .offer-card {
+            border-radius: 25px;
+        }
+
+        .offer-content h2 {
+            font-size: 1.8rem;
+        }
+
+        .offer-btn {
+            width: 100%;
+        }
+    }
+
+    /* Sign Up page */
+    .main {
+        height: calc(100vh - 40px);
+    }
+
+    .form-box {
+        top: 22%;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .main.active .form-box {
+        right: 0;
+        bottom: 30%;
+    }
+
+    .toggle-box::before {
+        left: 0;
+        top: -270%;
+        width: 100%;
+        height: 300%;
+        border-radius: 20vw;
+    }
+
+    .main.active .toggle-box::before {
+        left: 0;
+        top: 70%;
+    }
+
+    .toggle-panel {
+        width: 100%;
+        height: 30%;
+    }
+
+    .toggle-panel.toggle-left {
+        top: 0;
+    }
+
+    .main.active .toggle-panel.toggle-left {
+        left: 0;
+        top: -30%;
+    }
+
+    .toggle-panel.toggle-right {
+        right: 0;
+        bottom: -30%;
+    }
+
+    .main.active .toggle-panel.toggle-right {
+        bottom: 0;
+    }
+
+    /* About US */
+    .about_us_page .middle_content .left {
+        width: 100%;
+    }
+
+    .about_us_page .middle_content .right {
+        width: 100%;
+    }
+
+    .about_us_page .middle .middle_content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .about_us_page .mission_part .mission_content {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+}
+
+@media only screen and (max-width:400px) {
+    .form-box {
+        padding: 20px;
+    }
+
+    .toggle-panel h1 {
+        font-size: 30px;
+    }
+}
+
+
+/* Sign up Page */
+@media (max-width: 1024px) {
+    .main {
+        width: 700px;
+        height: 420px;
+    }
+
+    .info-content.Login {
+        padding: 0 30px 50px 120px;
+    }
+
+    .info-content.Register {
+        padding: 0 120px 50px 30px;
+    }
+
+    .info-content h2 {
+        font-size: 30px;
+    }
+
+    .info-content p {
+        font-size: 14px;
+    }
+
+    .form-box.Login {
+        padding: 0 30px;
+    }
+
+    .form-box.Register {
+        padding: 0 45px;
+    }
+
+    .form-box h2 {
+        font-size: 28px;
+    }
+}
+
+/* ========== Tablet Portrait & Small Screens ========== */
+@media (max-width: 768px) {
+    .sign_up_body {
+        padding: 20px;
+    }
+
+    .main {
+        width: 90%;
+        max-width: 450px;
+        height: auto;
+        min-height: 520px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Hide info content and curved shapes on smaller screens */
+    .info-content {
+        display: none !important;
+    }
+
+    .main .curved-shape,
+    .main .curved-shape2 {
+        display: none !important;
+    }
+
+    /* Make form boxes full width and stack them */
+    .main .form-box {
+        width: 100% !important;
+        padding: 40px 35px !important;
+        position: absolute;
+        left: 0 !important;
+        right: 0 !important;
+        top: 0;
+    }
+
+    /* Keep all animations - just ensure both forms are positioned to animate */
+    .form-box.Login {
+        left: 0;
+        pointer-events: auto;
+        z-index: 2;
+    }
+
+    .form-box.Register {
+        right: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* When active, swap pointer events and z-index */
+    .main.active .form-box.Login {
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .main.active .form-box.Register {
+        pointer-events: auto;
+        z-index: 2;
+    }
+
+    /* Don't override the animation transforms - let them work naturally */
+    /* The animations will slide forms in/out horizontally as designed */
+
+    .form-box h2 {
+        font-size: 26px;
+        margin-bottom: 15px;
+    }
+
+    .form-box .input-box {
+        margin-top: 22px;
+    }
+
+    .input-box input,
+    .input-box label {
+        font-size: 15px;
+    }
+
+    .regi-link {
+        font-size: 13px;
+        margin: 18px 0 8px;
+    }
+}
+
+
+/* ========== Small Mobile Phones ========== */
+@media (max-width: 360px) {
+
+
+    .form-box h2 {
+        font-size: 22px;
+    }
+
+
+    .input-box input,
+    .input-box label {
+        font-size: 13px;
+    }
+
+    .input-box .btn {
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .regi-link {
+        font-size: 11px;
+    }
+}
+
+/* ========== Large Desktop Screens ========== */
+@media (min-width: 1200px) {
+    .main {
+        width: 850px;
+        height: 500px;
+    }
+
+    .form-box.Login {
+        padding: 0 50px;
+    }
+
+    .form-box.Register {
+        padding: 0 70px;
+    }
+
+    .info-content.Login {
+        padding: 0 50px 60px 160px;
+    }
+
+    .info-content.Register {
+        padding: 0 160px 60px 50px;
+    }
+
+    .info-content h2 {
+        font-size: 38px;
+    }
+
+    .info-content p {
+        font-size: 17px;
+    }
+}
+
+/* ========== Extra Large Screens ========== */
+@media (min-width: 1600px) {
+    .main {
+        width: 900px;
+        height: 520px;
+    }
+
+    .form-box h2 {
+        font-size: 34px;
+    }
+
+    .info-content h2 {
+        font-size: 40px;
+    }
+}
+
+/* ========== Landscape Orientation for Mobile ========== */
+@media (max-height: 500px) and (orientation: landscape) {
+    .sign_up_body {
+        padding: 10px;
+    }
+
+    .main {
+        min-height: 400px;
+        height: auto;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .main .form-box {
+        padding: 25px 30px !important;
+        position: absolute;
+        width: 100% !important;
+    }
+
+    .form-box h2 {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .form-box .input-box {
+        margin-top: 14px;
+        height: 40px;
+    }
+
+    .input-box .btn {
+        height: 38px;
+    }
+
+    .regi-link {
+        margin: 12px 0 5px;
+    }
+}
