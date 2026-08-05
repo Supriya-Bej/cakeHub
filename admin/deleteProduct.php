@@ -1,34 +1,94 @@
 <?php
 include_once("function.php");
+include("back_colour.php");
+?>
 
-if ($_SERVER['REQUEST_METHOD'] === "GET" && $_GET['badge'] == 'product') {
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<?php
+
+// ================= DELETE PRODUCT =================
+
+if ($_SERVER['REQUEST_METHOD'] === "GET" && isset($_GET['badge']) && $_GET['badge'] == 'product') {
+
     $id = $_GET['product_id'];
     $call = delete_data('products', $id);
+
     if ($call) {
-        echo "<script>
-            alert('Product delete success');
+
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'Product deleted successfully.',
+            confirmButtonColor: '#ff6b81',
+            background: '#fffaf7',
+            color: '#5d4037'
+        }).then(() => {
             window.location.href='products.php';
-            </script>";
+        });
+        </script>";
     } else {
-        echo "<script>
-            alert('Product delete Unsuccess');
+
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Delete Failed!',
+            text: 'Unable to delete product.',
+            confirmButtonColor: '#dc3545',
+            background: '#fffaf7',
+            color: '#5d4037'
+        }).then(() => {
             window.location.href='products.php';
-            </script>";
+        });
+        </script>";
     }
+
+    exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === "GET" && $_GET['badge'] == 'order') {
+
+// ================= DELETE ORDER =================
+
+if ($_SERVER['REQUEST_METHOD'] === "GET" && isset($_GET['badge']) && $_GET['badge'] == 'order') {
+
     $id = $_GET['order_id'];
     $call = delete_data('orders', $id);
+
     if ($call) {
-        echo "<script>
-            alert('Order delete success');
+
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'Order deleted successfully.',
+            confirmButtonColor: '#ff6b81',
+            background: '#fffaf7',
+            color: '#5d4037'
+        }).then(() => {
             window.location.href='order.php';
-            </script>";
+        });
+        </script>";
     } else {
-        echo "<script>
-            alert('Order delete Unsuccess');
+
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Delete Failed!',
+            text: 'Unable to delete order.',
+            confirmButtonColor: '#dc3545',
+            background: '#fffaf7',
+            color: '#5d4037'
+        }).then(() => {
             window.location.href='order.php';
-            </script>";
+        });
+        </script>";
     }
+
+    exit();
 }
+?>

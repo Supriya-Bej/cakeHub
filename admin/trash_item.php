@@ -105,7 +105,7 @@ if (isset($_GET['delete_id'])) {
     <title>Trash Items</title>
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../Assests/css/bootstrap.min.css">
 
     <!-- Font Awesome -->
     <link rel="stylesheet"

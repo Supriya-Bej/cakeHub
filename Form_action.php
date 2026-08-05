@@ -1,16 +1,20 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <?php
 include('db_connect.php');
+include("admin/back_colour.php");
 global $conn;
 session_start();
+
 
 // Signup
 if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['register'])) {
 
     include("mail.php");
 
-    $name = $_POST['userName'];
-    $email = $_POST['Email'];
+    $name = mysqli_real_escape_string($conn, $_POST['userName']);
+    $email = mysqli_real_escape_string($conn, $_POST['Email']);
     $password = $_POST['Password'];
+
     $image = $_FILES['img']['name'];
     $temp_name = $_FILES['img']['tmp_name'];
     $upload = "image/" . $image;
@@ -19,80 +23,155 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['register'])) {
         move_uploaded_file($temp_name, $upload);
     }
 
+    // Check email already exists
     $checkEmail = "SELECT * FROM users WHERE email='$email'";
     $check = mysqli_query($conn, $checkEmail);
+
     if (mysqli_num_rows($check) > 0) {
-        echo "<script>
-                alert('Email already exists');
-                window.location.href='signup.php';
-              </script>";
+
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Email Already Exists',
+            text: 'Please login or use another email.',
+            confirmButtonColor: '#ff6b81',
+            background: '#fffaf7',
+            color: '#5d4037'
+        }).then(() => {
+            window.location.href = 'signup.php';
+        });
+        </script>";
+
+        exit();
+    }
+
+    // Generate OTP
+    $otp = rand(100000, 999999);
+
+    $_SESSION['otp'] = $otp;
+    $_SESSION['temp_name'] = $name;
+    $_SESSION['temp_email'] = $email;
+    $_SESSION['temp_password'] = $password;
+    $_SESSION['temp_image'] = $image;
+
+    // Send OTP
+    if (sendOTP($email, $otp)) {
+
+        header("Location: verify_otp.php");
+        exit();
     } else {
 
-        $otp = rand(100000, 999999);
-        $_SESSION['otp'] = $otp;
-        $_SESSION['temp_name'] = $name;
-        $_SESSION['temp_email'] = $email;
-        $_SESSION['temp_password'] = $password;
-        $_SESSION['temp_image'] = $image;
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'OTP Failed',
+            text: 'Unable to send OTP. Please try again.',
+            confirmButtonColor: '#dc3545',
+            background: '#fffaf7',
+            color: '#5d4037'
+        }).then(() => {
+            window.location.href = 'signup.php';
+        });
+        </script>";
 
-        if (sendOTP($email, $otp)) {
-            header("Location: verify_otp.php");
-            exit();
-        } else {
-            echo "OTP sending failed";
-        }
+        exit();
     }
 }
 
 // Login
 if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['login'])) {
-    $email = $_POST['Email'];
+
+    $email = mysqli_real_escape_string($conn, $_POST['Email']);
     $password = $_POST['Password'];
 
-
-    $check = "SELECT * FROM `users` WHERE email='$email'";
+    $check = "SELECT * FROM users WHERE email='$email'";
     $run = mysqli_query($conn, $check);
 
-
     if (mysqli_num_rows($run) > 0) {
+
         $data = mysqli_fetch_assoc($run);
+
+        // Email Verification Check
         if ($data['email_verified'] == 0) {
 
-            echo "<script>
-                alert('Please verify your email first');
+            echo "
+            <script>
+            Swal.fire({
+                icon: 'warning',
+                title: 'Email Not Verified',
+                text: 'Please verify your email first.',
+                confirmButtonColor: '#ff6b81',
+                background: '#fffaf7',
+                color: '#5d4037'
+            }).then(() => {
                 window.location.href='signup.php';
+            });
             </script>";
 
             exit();
         }
+
+        // Password Check
         if ($data['password'] == $password) {
+
             $_SESSION['user_id'] = $data['id'];
             $_SESSION['user_name'] = $data['name'];
             $_SESSION['user_email'] = $data['email'];
             $_SESSION['user_password'] = $data['password'];
-            if (!empty($image)) {
-                $_SESSION['user_image'] = $data['image'];
-            }
+            $_SESSION['user_image'] = $data['image'];
 
             header("Location:index.php");
             exit();
+
         } else {
-            echo "<script>
-            alert('Password did not match');
-            window.location.href='signup.php';
+
+            echo "
+            <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: 'Incorrect password. Please try again.',
+                confirmButtonColor: '#ff6b81',
+                background: '#fffaf7',
+                color: '#5d4037'
+            }).then(() => {
+                window.location.href='signup.php';
+            });
             </script>";
+
+            exit();
         }
+
     } else {
-        echo "<script>
-        alert('Email not exists go to Signup page or give the correct email');
-        window.location.href='signup.php';
+
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Email Not Found',
+            text: 'Please sign up first or enter the correct email.',
+            confirmButtonColor: '#ff6b81',
+            background: '#fffaf7',
+            color: '#5d4037'
+        }).then(() => {
+            window.location.href='signup.php';
+        });
         </script>";
+
+        exit();
     }
 }
 
 // Update Profile
 if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['updateProfile'])) {
+
     $user_id = $_SESSION['user_id'];
+
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+
     $image = $_FILES['image']['name'];
     $tempname = $_FILES['image']['tmp_name'];
     $store = "image/" . $image;
@@ -101,27 +180,71 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['updateProfile'])) {
     $old = mysqli_fetch_assoc(mysqli_query($conn, "SELECT image FROM users WHERE id='$user_id'"));
     $old_image = $old['image'];
 
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    // $password = $_POST['password'];
-
     if (!empty($image)) {
-        if (!empty($old_image)) {
+
+        if (!empty($old_image) && file_exists("image/" . $old_image)) {
             unlink("image/" . $old_image);
         }
 
         move_uploaded_file($tempname, $store);
-        $update = "UPDATE `users` SET `name`='$name',`email`='$email',`image`='$image' WHERE id='$user_id'";
+
+        $update = "UPDATE users
+                   SET name='$name',
+                       email='$email',
+                       image='$image'
+                   WHERE id='$user_id'";
+
     } else {
-        $update = "UPDATE `users` SET `name`='$name',`email`='$email' WHERE id='$user_id'";
+
+        $update = "UPDATE users
+                   SET name='$name',
+                       email='$email'
+                   WHERE id='$user_id'";
     }
+
     $result = mysqli_query($conn, $update);
+
     if ($result) {
-        $_SESSION['user_image'] = $image;
-        header("Location:profile.php");
+
+        // Update session values
+        $_SESSION['user_name'] = $name;
+        $_SESSION['user_email'] = $email;
+
+        if (!empty($image)) {
+            $_SESSION['user_image'] = $image;
+        }
+
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Profile Updated!',
+            text: 'Your profile has been updated successfully.',
+            confirmButtonColor: '#ff6b81',
+            background: '#fffaf7',
+            color: '#5d4037'
+        }).then(() => {
+            window.location.href = 'profile.php';
+        });
+        </script>";
+
         exit();
+
     } else {
-        echo "Error:" . mysqli_error($conn);
+
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Update Failed!',
+            text: 'Something went wrong. Please try again.',
+            confirmButtonColor: '#dc3545',
+            background: '#fffaf7',
+            color: '#5d4037'
+        });
+        </script>";
+
+        exit();
     }
 }
 
