@@ -1,4 +1,3 @@
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <?php
 include('db_connect.php');
 include("admin/back_colour.php");
@@ -124,7 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['login'])) {
 
             header("Location:index.php");
             exit();
-
         } else {
 
             echo "
@@ -143,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['login'])) {
 
             exit();
         }
-
     } else {
 
         echo "
@@ -177,26 +174,30 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['updateProfile'])) {
     $store = "image/" . $image;
 
     // Get old image
-    $old = mysqli_fetch_assoc(mysqli_query($conn, "SELECT image FROM users WHERE id='$user_id'"));
+    $old = mysqli_fetch_assoc(
+        mysqli_query($conn, "SELECT image FROM users WHERE id='$user_id'")
+    );
+
     $old_image = $old['image'];
 
     if (!empty($image)) {
 
+        // Delete old image
         if (!empty($old_image) && file_exists("image/" . $old_image)) {
             unlink("image/" . $old_image);
         }
 
+        // Upload new image
         move_uploaded_file($tempname, $store);
 
-        $update = "UPDATE users
+        $update = "UPDATE users 
                    SET name='$name',
                        email='$email',
                        image='$image'
                    WHERE id='$user_id'";
-
     } else {
 
-        $update = "UPDATE users
+        $update = "UPDATE users 
                    SET name='$name',
                        email='$email'
                    WHERE id='$user_id'";
@@ -206,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['updateProfile'])) {
 
     if ($result) {
 
-        // Update session values
+        // Update session
         $_SESSION['user_name'] = $name;
         $_SESSION['user_email'] = $email;
 
@@ -214,36 +215,18 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['updateProfile'])) {
             $_SESSION['user_image'] = $image;
         }
 
-        echo "
-        <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Profile Updated!',
-            text: 'Your profile has been updated successfully.',
-            confirmButtonColor: '#ff6b81',
-            background: '#fffaf7',
-            color: '#5d4037'
-        }).then(() => {
-            window.location.href = 'profile.php';
-        });
-        </script>";
+        // Success message
+        $_SESSION['profile_success'] = true;
 
+        // Go back to profile page
+        header("Location: profile.php");
         exit();
-
     } else {
 
-        echo "
-        <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Update Failed!',
-            text: 'Something went wrong. Please try again.',
-            confirmButtonColor: '#dc3545',
-            background: '#fffaf7',
-            color: '#5d4037'
-        });
-        </script>";
+        // Error message
+        $_SESSION['profile_error'] = true;
 
+        header("Location: profile.php");
         exit();
     }
 }
@@ -304,6 +287,81 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['user_id'])) {
         }
 
         echo "success";
+        exit();
+    }
+    if (!empty($_POST['product_ids'])) {
+
+        $product_ids = explode(",", $_POST['product_ids']);
+
+        foreach ($product_ids as $product_id) {
+
+            $product_id = trim($product_id);
+
+            $sql = "SELECT * FROM products WHERE id='$product_id'";
+            $result = mysqli_query($conn, $sql);
+            $product = mysqli_fetch_assoc($result);
+
+            $product_stock = $product['stock'];
+
+            $cartQuery = "SELECT * FROM cart 
+                      WHERE user_id='$user_id' 
+                      AND product_id='$product_id'";
+
+            $cartRun = mysqli_query($conn, $cartQuery);
+            $cartData = mysqli_fetch_assoc($cartRun);
+
+            $quantity = $cartData['quantity'];
+
+            $update_stock = $product_stock - $quantity;
+
+            $totalPrice = $product['price'] * $quantity;
+
+            $insert = "INSERT INTO orders(
+            user_id,
+            username,
+            phNumber,
+            product_id,
+            quantity,
+            price,
+            order_date,
+            address,
+            message,
+            payment_type,
+            status
+        ) VALUES(
+            '$user_id',
+            '$userName',
+            '$userPhone',
+            '$product_id',
+            '$quantity',
+            '$totalPrice',
+            '$date',
+            '$address',
+            '$message',
+            '$payment',
+            'Pending'
+        )";
+
+            $run = mysqli_query($conn, $insert);
+
+            if ($run) {
+
+                $update1 = "UPDATE products
+                        SET stock='$update_stock'
+                        WHERE id='$product_id'";
+
+                mysqli_query($conn, $update1);
+
+                mysqli_query(
+                    $conn,
+                    "DELETE FROM cart
+                 WHERE user_id='$user_id'
+                 AND product_id='$product_id'"
+                );
+            }
+        }
+        header("Location: order_success.php");
+        exit();
     }
 
     // SINGLE PRODUCT ORDER
@@ -325,12 +383,19 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['user_id'])) {
         $run = mysqli_query($conn, $insert);
 
         if ($run) {
-            $update = "UPDATE `products` SET `stock`='$update_stock' WHERE id = '$product_id'";
-            $res = mysqli_query($conn, $update);
-            echo "success";
+
+            $update = "UPDATE products
+               SET stock='$update_stock'
+               WHERE id='$product_id'";
+
+            mysqli_query($conn, $update);
+
+            header("Location: order_success.php");
+            exit();
         } else {
 
-            echo "error";
+            echo "Order failed!";
+            exit();
         }
     }
 }
@@ -339,11 +404,17 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['user_id'])) {
 $user_id = $_SESSION['user_id'];
 if (isset($_GET['product_id'])) {
     $productId = $_GET['product_id'];
-    $order = "SELECT * FROM orders WHERE user_id = '$user_id' AND product_id = '$productId'";
+    $orderId = $_GET['order_id'];
+    $order = "SELECT * FROM orders WHERE user_id = '$user_id' AND product_id = '$productId' AND id='$orderId'";
     $runOrder = mysqli_query($conn, $order);
     $status = $_GET['value'];
 
-    $updateOrder = "UPDATE `orders` SET `status`='$status' WHERE user_id = '$user_id' AND product_id = '$productId'";
+    $updateOrder = "UPDATE `orders` 
+                SET `status`='$status' 
+                WHERE user_id='$user_id' 
+                AND product_id='$productId' 
+                AND id='$orderId'";
+                
     $runUpdateOrder = mysqli_query($conn, $updateOrder);
     if ($runUpdateOrder) {
         echo "cancel";

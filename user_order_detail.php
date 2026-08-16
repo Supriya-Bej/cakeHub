@@ -275,7 +275,7 @@ $row = mysqli_fetch_all($result, MYSQLI_ASSOC);
                             </div>
                             <?php } else {
                             if ($value['status'] == "Pending") { ?>
-                                <a href="Form_action.php?product_id=<?php echo $value['product_id']; ?>&value=cancel">
+                                <a href="Form_action.php?product_id=<?php echo $value['product_id']; ?>&order_id=<?php echo $value['id']; ?>&value=cancel">
 
                                     <button type="button" class="p-2 bg-danger text-light fw-medium rounded-5 border-0">
                                         Cancel Order

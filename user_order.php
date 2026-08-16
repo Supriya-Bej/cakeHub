@@ -295,8 +295,9 @@ $run = mysqli_query($conn, $method);
 
                     </div>
 
-                    <button type="button" class="btn btn-order w-100 mt-3 text-light" name="orderBtn"
-                        onclick="order()">
+                    <button type="submit"
+                        class="btn btn-order w-100 mt-3 text-light"
+                        name="orderBtn">
                         Place Order 🚀
                     </button>
 
@@ -361,34 +362,37 @@ $run = mysqli_query($conn, $method);
                     body: formData
                 });
 
-                const data = await res.text();
+                const data = (await res.text()).trim();
 
-                if (data == "success") {
-                    setTimeout(() => {
-                        window.location.href = "order_success.php";
-                    }, 1500);
+                console.log("Order Response:", data);
 
-                } else if (data == "error") {
+                if (data === "success") {
+
+                    // Order successful → immediately go to success page
+                    window.location.href = "order_success.php";
+
+                } else {
 
                     document.getElementById("notify_msg").innerHTML = `
-
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-
-                    <strong>Error!</strong> Order failed.
-
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <strong>Order Failed!</strong> Please try again.
                     <button type="button"
                         class="btn-close"
                         data-bs-dismiss="alert">
                     </button>
-
                 </div>
-
-                `;
-
+            `;
                 }
 
             } catch (error) {
-                console.log(error);
+
+                console.log("Order Error:", error);
+
+                document.getElementById("notify_msg").innerHTML = `
+            <div class="alert alert-danger mt-3">
+                Something went wrong. Please try again.
+            </div>
+        `;
             }
         }
 
