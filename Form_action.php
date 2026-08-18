@@ -251,49 +251,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['user_id'])) {
         $product_ids = explode(",", $_POST['product_ids']);
 
         foreach ($product_ids as $product_id) {
-            $product_id = trim($product_id);
-
-            // GET PRODUCT PRICE
-            $sql = "SELECT * FROM products WHERE id='$product_id'";
-            $result = mysqli_query($conn, $sql);
-            $product = mysqli_fetch_assoc($result);
-            $product_stock = $product['stock'];
-
-            // CART QUANTITY
-            $cartQuery = "SELECT * FROM cart WHERE user_id='$user_id' AND product_id='$product_id'";
-            $cartRun = mysqli_query($conn, $cartQuery);
-            $cartData = mysqli_fetch_assoc($cartRun);
-            $quantity = $cartData['quantity'];
-            $update_stock = $product_stock - $quantity;
-
-            // TOTAL PRICE
-            $totalPrice = $product['price'] * $quantity;
-
-            // INSERT ORDER
-            $insert = "INSERT INTO orders(user_id, username, phNumber, product_id, quantity, price, order_date, 
-            address, message, payment_type, status) VALUES ('$user_id','$userName','$userPhone','$product_id',
-            '$quantity','$totalPrice','$date','$address','$message','$payment','Pending')";
-
-            $run = mysqli_query($conn, $insert);
-            if ($run) {
-                $update1 = "UPDATE `products` SET `stock`='$update_stock' WHERE id = '$product_id'";
-                $res1 = mysqli_query($conn, $update1);
-            }
-
-            // REMOVE FROM CART
-            mysqli_query($conn, "DELETE FROM cart 
-            WHERE user_id='$user_id' 
-            AND product_id='$product_id'");
-        }
-
-        echo "success";
-        exit();
-    }
-    if (!empty($_POST['product_ids'])) {
-
-        $product_ids = explode(",", $_POST['product_ids']);
-
-        foreach ($product_ids as $product_id) {
 
             $product_id = trim($product_id);
 
@@ -303,8 +260,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['user_id'])) {
 
             $product_stock = $product['stock'];
 
-            $cartQuery = "SELECT * FROM cart 
-                      WHERE user_id='$user_id' 
+            $cartQuery = "SELECT * FROM cart
+                      WHERE user_id='$user_id'
                       AND product_id='$product_id'";
 
             $cartRun = mysqli_query($conn, $cartQuery);
@@ -344,22 +301,28 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['user_id'])) {
 
             $run = mysqli_query($conn, $insert);
 
-            if ($run) {
-
-                $update1 = "UPDATE products
-                        SET stock='$update_stock'
-                        WHERE id='$product_id'";
-
-                mysqli_query($conn, $update1);
-
-                mysqli_query(
-                    $conn,
-                    "DELETE FROM cart
-                 WHERE user_id='$user_id'
-                 AND product_id='$product_id'"
-                );
+            if (!$run) {
+                echo "Order failed!";
+                exit();
             }
+
+            // Update stock
+            $update1 = "UPDATE products
+                    SET stock='$update_stock'
+                    WHERE id='$product_id'";
+
+            mysqli_query($conn, $update1);
+
+            // Remove cart
+            mysqli_query(
+                $conn,
+                "DELETE FROM cart
+             WHERE user_id='$user_id'
+             AND product_id='$product_id'"
+            );
         }
+
+        // ORDER SUCCESS
         header("Location: order_success.php");
         exit();
     }
@@ -414,7 +377,7 @@ if (isset($_GET['product_id'])) {
                 WHERE user_id='$user_id' 
                 AND product_id='$productId' 
                 AND id='$orderId'";
-                
+
     $runUpdateOrder = mysqli_query($conn, $updateOrder);
     if ($runUpdateOrder) {
         echo "cancel";

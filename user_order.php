@@ -468,9 +468,10 @@ $run = mysqli_query($conn, $method);
 
                 // Transaction success
                 handler: function(response) {
-                    console.log(response);
-                    document.querySelector(".btn-order").click();
 
+                    console.log("Payment Successful:", response);
+
+                    document.querySelector(".btn-order").click();
                 }
             };
 
