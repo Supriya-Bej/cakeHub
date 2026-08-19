@@ -1,17 +1,22 @@
 <?php
+if (!isset($_SESSION['user_id'])) {
+    header("Location: signup.php");
+    exit();
+}
+
 include("header.php");
 global $conn;
-if (isset($_GET['user_id'])) {
-    // For filtering by button
-    $user_id = $_GET['user_id'];
 
-    $wishlistData = "SELECT wishlist.*, products.*,wishlist.product_id AS wish_pid, cart.product_id AS 
+// For filtering by button
+$user_id = $_GET['user_id'];
+
+$wishlistData = "SELECT wishlist.*, products.*,wishlist.product_id AS wish_pid, cart.product_id AS 
     cart_pid FROM wishlist INNER JOIN products ON products.id = wishlist.product_id LEFT JOIN cart
         ON products.id = cart.product_id AND cart.user_id = '$user_id' WHERE wishlist.user_id = '$user_id'";
-    $result = mysqli_query($conn, $wishlistData);
+$result = mysqli_query($conn, $wishlistData);
 
-    $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
-}
+$data = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
 ?>
 
 <!DOCTYPE html>

@@ -1,4 +1,10 @@
 <?php
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: signup.php");
+    exit();
+}
+
 include("header.php");
 global $conn;
 
